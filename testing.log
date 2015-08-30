@@ -1,0 +1,1 @@
+. freeze_future/tests/test_freeze_future.py::test_cxfreeze_work_urllib

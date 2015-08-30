@@ -1,0 +1,16 @@
+Metadata-Version: 1.1
+Name: freeze-future
+Version: 0.1
+Summary: fixes up setup.py excludes for freezing when using future
+Home-page: UNKNOWN
+Author: timothy eichler
+Author-email: tim_eichler@hotmail.com
+License: BSD
+Description: UNKNOWN
+Keywords: future freeze setuptools disutils
+Platform: UNKNOWN
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: BSD License
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Programming Language :: Python :: 3.5

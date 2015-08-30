@@ -1,0 +1,9 @@
+actionid: py34
+msg: getenv
+cmdargs: ['C:\\Python34\\python.exe', '-m', 'virtualenv', '--python', 'c:\\python34\\python.exe', 'py34']
+env: {'PATHEXT': '.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC;.PY', 'TEMP': 'C:\\Users\\timeyyy\\AppData\\Local\\Temp', 'SYSTEMROOT': 'C:\\Windows', 'SYSTEMDRIVE': 'C:', 'PATH': 'D:\\STORAGE\\Dropbox\\programming\\freeze_future\\.tox\\py34\\Scripts;C:\\ProgramData\\Oracle\\Java\\javapath;C:\\Python34\\;C:\\Python34\\Scripts;C:\\Program Files (x86)\\AMD APP\\bin\\x86_64;C:\\Program Files (x86)\\AMD APP\\bin\\x86;C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;C:\\Program Files (x86)\\Git\\cmd;C:\\MinGW\\bin;C:\\Program Files (x86)\\Skype\\Phone\\;C:\\Program Files (x86)\\GnuWin32\\bin;C:\\Python27;C:\\Python27\\Scripts', 'VIRTUAL_ENV': 'D:\\STORAGE\\Dropbox\\programming\\freeze_future\\.tox\\py34', 'PYTHONHASHSEED': '465', 'TMP': 'C:\\Users\\timeyyy\\AppData\\Local\\Temp'}
+
+Using base prefix 'c:\\python34'
+New python executable in py34\Scripts\python.exe
+Installing setuptools, pip...done.
+Running virtualenv with interpreter c:\python34\python.exe

@@ -1,0 +1,11 @@
+F freeze_future/tests/test_freeze_future.py::TestEsky::()::test_esky_fix_future
+ self = <test_freeze_future.TestEsky instance at 0x02EBB0F8>
+ 
+     @pytest.mark.tim2
+     def test_esky_fix_future(self):
+             '''tests our fix'''
+             setup, options, new_script = self.esky_setup('esky fixed', 'esky_fixed.py')
+     
+             insert_code(new_script,
+                                     "from future import standard_library",
+                                     "standard_library.install_alias

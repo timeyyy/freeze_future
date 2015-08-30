@@ -1,0 +1,45 @@
+[file_prefs]
+final_new_line=true
+ensure_convert_new_lines=false
+strip_trailing_spaces=false
+replace_tabs=false
+
+[indentation]
+indent_width=4
+indent_type=1
+indent_hard_tab_width=8
+detect_indent=false
+detect_indent_width=false
+indent_mode=2
+
+[project]
+name=freezing_future
+base_path=/home/alfa/Dropbox/programming/freeze_future
+description=
+file_patterns=
+
+[long line marker]
+long_line_behaviour=1
+long_line_column=72
+
+[files]
+current_page=6
+FILE_NAME_0=6172;Python;0;EUTF-8;1;1;0;%2Fhome%2Falfa%2FDropbox%2Fprogramming%2Ffreeze_future%2Ffreeze_future%2Ftests%2Ftest_cxfreeze.py;0;4
+FILE_NAME_1=10103;Python;0;EUTF-8;1;1;0;%2Fhome%2Falfa%2FDropbox%2Fprogramming%2Ffreeze_future%2Ffreeze_future%2Ffreeze_future.py;0;4
+FILE_NAME_2=1554;Python;0;EUTF-8;1;1;0;%2Fhome%2Falfa%2FDropbox%2Fprogramming%2Ffreeze_future%2Ffreeze_future%2Ftests%2Ftest_esky.py;0;4
+FILE_NAME_3=675;Python;0;EUTF-8;1;1;0;%2Fhome%2Falfa%2FDropbox%2Fprogramming%2Ffreeze_future%2Ffreeze_future%2Ftests%2Ftest_distutils.py;0;4
+FILE_NAME_4=2990;Python;0;EUTF-8;1;1;0;%2Fhome%2Falfa%2FDropbox%2Fprogramming%2Ffreeze_future%2Ffreeze_future%2Ftests%2Ftest_setuptools.py;0;4
+FILE_NAME_5=0;Python;0;EUTF-8;1;1;0;%2Fhome%2Falfa%2FDropbox%2Fprogramming%2Ffreeze_future%2Ffreeze_future%2Ftests%2Ftest_py2exe.py;0;4
+FILE_NAME_6=14;Python;0;EUTF-8;1;1;0;%2Fhome%2Falfa%2FDropbox%2Fprogramming%2Ftestesky%2Fmine%2Fesky%2Ftests%2Ftest_esky.py;0;4
+
+[build-menu]
+PythonFT_00_LB=_Compile
+PythonFT_00_CM=python -m py_compile "%f" -m "not fail"
+PythonFT_00_WD=
+PythonFT_01_LB=test2
+PythonFT_01_CM=python -m pytest "%f" -m "not fail"
+PythonFT_01_WD=
+PythonFT_02_LB=test3
+PythonFT_02_CM=python3 -m pytest "%f"
+PythonFT_02_WD=
+filetypes=Python;

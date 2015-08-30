@@ -1,0 +1,153 @@
+============================= test session starts =============================
+platform win32 -- Python 2.7.10 -- py-1.4.30 -- pytest-2.7.2
+rootdir: C:\Users\timeyyy\Dropbox\programming\freeze_future, inifile: 
+collected 6 items
+
+test_esky.py F
+
+================================== FAILURES ===================================
+____________________________ test_esky_and_future _____________________________
+
+    @pytest.mark.fail1# finding out why future 2 wfails but not this one
+    def test_esky_and_future():
+        '''
+        Testing adding the future imports doesn't fuck up the building on python3
+        Fucks up python2 though
+        Esky allows setup to compile, but the script will not run
+        '''
+        setup, options, new_script = esky_setup('Working with Future Import', 'esky_future_working.py')
+    
+        insert_code(new_script,
+                    "from __future__ import print_function",
+                    "from future import standard_library",
+                    "standard_library.install_aliases()")
+    
+        if PY3:
+            freeze_future.setup(setup, **options)
+            assert run_script(new_script, freezer='esky')
+        else:
+            #~ with pytest.raises(Exception):
+>           freeze_future.setup(setup, **options)
+
+test_esky.py:123: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\freeze_future.py:266: in setup
+    dist_setup(**options)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+attrs = {'bdist_esky': {'excludes': ['urllib.StringIO', 'urllib.UserDict', 'urllib.__builtin__', 'urllib.__future__', 'urllib....e', 'builtins']}, 'name': 'Working with Future Import', 'script_args': ['bdist_esky'], 'script_name': 'pytest.py', ...}
+klass = <class setuptools.dist.Distribution at 0x02D34E68>
+dist = <setuptools.dist.Distribution instance at 0x02D63D50>, ok = 1
+exc = WindowsError(32, 'The process cannot access the file because it is being used by another process')
+
+    def setup(**attrs):
+        """The gateway to the Distutils: do everything your setup script needs
+        to do, in a highly flexible and user-driven way.  Briefly: create a
+        Distribution instance; find and parse config files; parse the command
+        line; run each Distutils command found there, customized by the options
+        supplied to 'setup()' (as keyword arguments), in config files, and on
+        the command line.
+    
+        The Distribution instance might be an instance of a class supplied via
+        the 'distclass' keyword argument to 'setup'; if no such class is
+        supplied, then the Distribution class (in dist.py) is instantiated.
+        All other arguments to 'setup' (except for 'cmdclass') are used to set
+        attributes of the Distribution instance.
+    
+        The 'cmdclass' argument, if supplied, is a dictionary mapping command
+        names to command classes.  Each command encountered on the command line
+        will be turned into a command class, which is in turn instantiated; any
+        class found in 'cmdclass' is used in place of the default, which is
+        (for command 'foo_bar') class 'foo_bar' in module
+        'distutils.command.foo_bar'.  The command class must provide a
+        'user_options' attribute which is a list of option specifiers for
+        'distutils.fancy_getopt'.  Any command-line options between the current
+        and the next command are used to set attributes of the current command
+        object.
+    
+        When the entire command-line has been successfully parsed, calls the
+        'run()' method on each command object in turn.  This method will be
+        driven entirely by the Distribution object (which each command object
+        has a reference to, thanks to its constructor), and the
+        command-specific options that became attributes of each command
+        object.
+        """
+    
+        global _setup_stop_after, _setup_distribution
+    
+        # Determine the distribution class -- either caller-supplied or
+        # our Distribution (see below).
+        klass = attrs.get('distclass')
+        if klass:
+            del attrs['distclass']
+        else:
+            klass = Distribution
+    
+        if 'script_name' not in attrs:
+            attrs['script_name'] = os.path.basename(sys.argv[0])
+        if 'script_args' not in attrs:
+            attrs['script_args'] = sys.argv[1:]
+    
+        # Create the Distribution instance, using the remaining arguments
+        # (ie. everything except distclass) to initialize it
+        try:
+            _setup_distribution = dist = klass(attrs)
+        except DistutilsSetupError, msg:
+            if 'name' in attrs:
+                raise SystemExit, "error in %s setup command: %s" % \
+                      (attrs['name'], msg)
+            else:
+                raise SystemExit, "error in setup command: %s" % msg
+    
+        if _setup_stop_after == "init":
+            return dist
+    
+        # Find and parse the config file(s): they will override options from
+        # the setup script, but be overridden by the command line.
+        dist.parse_config_files()
+    
+        if DEBUG:
+            print "options (after parsing config files):"
+            dist.dump_option_dicts()
+    
+        if _setup_stop_after == "config":
+            return dist
+    
+        # Parse the command line and override config files; any
+        # command-line errors are the end user's fault, so turn them into
+        # SystemExit to suppress tracebacks.
+        try:
+            ok = dist.parse_command_line()
+        except DistutilsArgError, msg:
+            raise SystemExit, gen_usage(dist.script_name) + "\nerror: %s" % msg
+    
+        if DEBUG:
+            print "options (after parsing command line):"
+            dist.dump_option_dicts()
+    
+        if _setup_stop_after == "commandline":
+            return dist
+    
+        # And finally, run all the commands found on the command line.
+        if ok:
+            try:
+                dist.run_commands()
+            except KeyboardInterrupt:
+                raise SystemExit, "interrupted"
+            except (IOError, os.error), exc:
+                if DEBUG:
+                    sys.stderr.write("error: %s\n" % (exc,))
+                    raise
+                else:
+>                   raise SystemExit, "error: %s" % (exc,)
+E                   SystemExit: error: [Error 32] The process cannot access the file because it is being used by another process: 'c:\\users\\timeyyy\\.babun\\cygwin\\tmp\\tmpzdn2of\\scripts\\esky_future_working.py'
+
+C:\Python27\lib\distutils\core.py:159: SystemExit
+---------------------------- Captured stdout call -----------------------------
+running bdist_esky
+---------------------------- Captured stderr call -----------------------------
+C:\Python27\lib\distutils\dist.py:267: UserWarning: Unknown distribution option: 'bdist_esky'
+  warnings.warn(msg)
+!!!!!!!!!!!!!!!!!!! Interrupted: stopping after 1 failures !!!!!!!!!!!!!!!!!!!!
+===================== 5 tests deselected by "-m 'fail1'" ======================
+=================== 1 failed, 5 deselected in 3.72 seconds ====================

@@ -1,0 +1,40 @@
+actionid: tox
+msg: packaging
+cmdargs: ['C:\\Python34\\python.exe', local('D:\\STORAGE\\Dropbox\\programming\\freeze_future\\setup.py'), 'sdist', '--formats=zip', '--dist-dir', local('D:\\STORAGE\\Dropbox\\programming\\freeze_future\\.tox\\dist')]
+env: None
+
+running sdist
+running egg_info
+writing dependency_links to freeze_future.egg-info\dependency_links.txt
+writing freeze_future.egg-info\PKG-INFO
+writing top-level names to freeze_future.egg-info\top_level.txt
+reading manifest file 'freeze_future.egg-info\SOURCES.txt'
+writing manifest file 'freeze_future.egg-info\SOURCES.txt'
+warning: sdist: standard file not found: should have one of README, README.rst, README.txt
+
+running check
+warning: check: missing required meta-data: url
+
+creating freeze_future-0.1
+creating freeze_future-0.1\freeze_future
+creating freeze_future-0.1\freeze_future.egg-info
+making hard links in freeze_future-0.1...
+hard linking setup.py -> freeze_future-0.1
+hard linking freeze_future\__init__.py -> freeze_future-0.1\freeze_future
+hard linking freeze_future\freeze_future.py -> freeze_future-0.1\freeze_future
+hard linking freeze_future.egg-info\PKG-INFO -> freeze_future-0.1\freeze_future.egg-info
+hard linking freeze_future.egg-info\SOURCES.txt -> freeze_future-0.1\freeze_future.egg-info
+hard linking freeze_future.egg-info\dependency_links.txt -> freeze_future-0.1\freeze_future.egg-info
+hard linking freeze_future.egg-info\top_level.txt -> freeze_future-0.1\freeze_future.egg-info
+Writing freeze_future-0.1\setup.cfg
+creating 'D:\STORAGE\Dropbox\programming\freeze_future\.tox\dist\freeze_future-0.1.zip' and adding 'freeze_future-0.1' to it
+adding 'freeze_future-0.1\PKG-INFO'
+adding 'freeze_future-0.1\setup.cfg'
+adding 'freeze_future-0.1\setup.py'
+adding 'freeze_future-0.1\freeze_future\freeze_future.py'
+adding 'freeze_future-0.1\freeze_future\__init__.py'
+adding 'freeze_future-0.1\freeze_future.egg-info\dependency_links.txt'
+adding 'freeze_future-0.1\freeze_future.egg-info\PKG-INFO'
+adding 'freeze_future-0.1\freeze_future.egg-info\SOURCES.txt'
+adding 'freeze_future-0.1\freeze_future.egg-info\top_level.txt'
+removing 'freeze_future-0.1' (and everything under it)

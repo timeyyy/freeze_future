@@ -1,0 +1,8 @@
+actionid: py34
+msg: getenv
+cmdargs: [local('D:\\STORAGE\\Dropbox\\programming\\freeze_future\\.tox\\py34\\Scripts\\pip.EXE'), 'install', 'pytest', 'future', 'cx-Freeze', 'tkinter', 'Tkinter']
+env: {'PATHEXT': '.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC;.PY', 'TEMP': 'C:\\Users\\timeyyy\\AppData\\Local\\Temp', 'SYSTEMROOT': 'C:\\Windows', 'SYSTEMDRIVE': 'C:', 'PATH': 'D:\\STORAGE\\Dropbox\\programming\\freeze_future\\.tox\\py34\\Scripts;C:\\ProgramData\\Oracle\\Java\\javapath;C:\\Python34\\;C:\\Python34\\Scripts;C:\\Program Files (x86)\\AMD APP\\bin\\x86_64;C:\\Program Files (x86)\\AMD APP\\bin\\x86;C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;C:\\Program Files (x86)\\Git\\cmd;C:\\MinGW\\bin;C:\\Program Files (x86)\\Skype\\Phone\\;C:\\Program Files (x86)\\GnuWin32\\bin;C:\\Python27;C:\\Python27\\Scripts', 'VIRTUAL_ENV': 'D:\\STORAGE\\Dropbox\\programming\\freeze_future\\.tox\\py34', 'PYTHONHASHSEED': '465', 'TMP': 'C:\\Users\\timeyyy\\AppData\\Local\\Temp'}
+
+You are using pip version 6.1.1, however version 7.0.3 is available.
+You should consider upgrading via the 'pip install --upgrade pip' command.
+Double requirement given: Tkinter (already in tkinter, name='Tkinter')
