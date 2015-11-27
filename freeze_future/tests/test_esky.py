@@ -12,65 +12,71 @@ import copy
 import time
 import zipfile
 import pytest
-import logging
+import copy
+
+from esky import bdist_esky
+from distutils.core import setup as dist_setup
+from esky.bdist_esky import Executable
+from esky.util import deep_extract_zipfile, get_platform
+import esky.patch
 
 import freeze_future
 import variables as V
 from utils import really_rmtree, InMemoryWriter, extract_zipfile, cleanup_dirs, \
-    normalize_sysargs, make_new_script_name, insert_code, run_script
+    normalize_sysargs, make_new_script_name, insert_code, run_script, get_zip_name
 
 WORKING_SCRIPT = V.SCRIPT
 ORIGINAL_CWD = os.getcwd()
+
+try:
+    import setuptools
+except ImportError:
+    pass
 
 if sys.version_info[0] > 2:
     PY3 = True
 else:
     PY3 = False
 
-def setup_logger(log_file):
-    '''One function call to set up logging with some nice logs about the machine'''
-    logging.basicConfig(
-        filename=log_file,
-        filemode='w',
-        level=logging.DEBUG,
-        format='%(asctime)s:%(levelname)s: %(message)s')  # one run
-setup_logger('t_esky_log.log')
-
 def setup_module():
+    normalize_sysargs('bdist_esky')
+
+def setup_function(func):
     cleanup_dirs()
 
-def teardown():
+def teardown_function(func):
     cleanup_dirs()
 
 def esky_setup(name, script, **changes):
-    from esky import bdist_esky
-    from distutils.core import setup
-    from esky.bdist_esky import Executable
     new_script = make_new_script_name(script)
     base_options = {"version": "1.0"}
     changes.update({'name':name})
     base_options.update(changes)
+
+    options = {"options":
+                   {"bdist_esky":
+                        {"freezer_module": "cxfreeze"}}}
+
     base_options['scripts'] = [new_script]
     base_options.update({'script_args':["bdist_esky"]})
-    base_options.update({"bdist_esky":{
-                                    "freezer_module": "cxfreeze"}})
-    return setup, base_options, new_script
+    base_options.update(options)
+    # return dist_setup, base_options, new_script
+    return freeze_future.setup, base_options, new_script
 
-@pytest.mark.one
 def test_esky_detected():
     '''make sure freeze_future knows that esky is being used'''
     setup, options, name = esky_setup('working script no future should return', WORKING_SCRIPT)
     assert freeze_future.detect_freezer(options) == 'esky'
 
-
 def test_esky_builds_and_runs():
     '''Test a small script to make sure it builds properly
     If this fails it means you have a problem with ESKY so go fix it!!! '''
     setup, options, new_script = esky_setup('Simple Working', WORKING_SCRIPT)
-    freeze_future.setup(setup, **options)
-    assert run_script(WORKING_SCRIPT, freezer='esky')
+    setup(**options)
+    clean_exit, stderr = run_script(WORKING_SCRIPT, freezer='esky')
+    assert clean_exit
 
-def test_esky_failure_condition():
+def test_esky_failure_condition_fixed():
     setup, options, new_script = esky_setup('test_condition', 'test_condition.py')
     insert_code(new_script,
                 "from future import standard_library",
@@ -79,46 +85,18 @@ def test_esky_failure_condition():
     setup(**options)
     clean_exit, stderr = run_script(new_script, freezer='esky')
 
-    if PY3:
-        # Im thinking this is my py3 fixes... as cxfreeze works with fthe standard_library() fine
-        fail_cond = 'Grammar.txt'
-        assert not clean_exit and fail_cond in str(stderr)
-    else:
-        #this failure condition is from cxfreeze and py2exe.. they need to get their shit together
-        fail_cond = 'No module named UserList'
-        assert not clean_exit and fail_cond in stderr
+    assert clean_exit
 
-def test_esky_failure_condition2():
-    '''not sure who is responsibile for this failure on py2 have to confirm TODO'''
+@pytest.mark.xfail(reason="original esky failing under this condition")
+def test_esky_failure_condition2_fixed():
     setup, options, new_script = esky_setup('test_condition2', 'test_condition2.py')
     insert_code(new_script,
                 "from __future__ import print_function",)
     fail_cond = 'The process cannot access the file because it is being used by another process'
-    try:
-        setup(**options)
-    except SystemExit as err:
-        assert fail_cond in str(err)
+    setup(**options)
+    clean_exit, stderr = run_script(new_script, freezer='esky')
 
-
-def test_esky_freeze_future_running_when_using_future_import():
-    '''Tests that a script with the future imports gets recognized and we run
-    our code'''
-    setup, options, new_script = esky_setup('should run the setup stuff', 'esky_reuturn_working.py')
-    insert_code(new_script,
-        "from __future__ import print_function",
-        "from future import standard_library",
-        "standard_library.install_aliases()")
-    dummy_setup = lambda *args, **kwargs: 0
-    if PY3:
-        assert freeze_future.setup(dummy_setup, **options) == True
-    else:
-        assert freeze_future.setup(dummy_setup, **options) == True
-
-
-def test_esky_no_return_when_no_future_import():
-    '''Make sure freeze_future code always runs if using esky as esky uses the future model'''
-    setup, options, name = esky_setup('working script no future should return', WORKING_SCRIPT)
-    assert freeze_future.setup(setup, **options) == True
+    assert clean_exit
 
 
 def test_esky_freeze_future_condition_one_fix():
@@ -134,12 +112,11 @@ def test_esky_freeze_future_condition_one_fix():
                 "from subprocess import getoutput",
                 "from builtins import str",
                 "from builtins import range",)
-    freeze_future.setup(setup, **options)
-    assert run_script(new_script, freezer='esky')
+    setup(**options)
+    clean_exit, stderr = run_script(new_script, freezer='esky')
+    assert clean_exit
 
-
-@pytest.mark.fail
-@pytest.mark.fail6
+@pytest.mark.xfail(reason="need to implement fix2 zzz")
 def test_esky_freeze_future_condition_two_fix():
     '''
     Testing adding the future imports doesn't fuck up the building on python3
@@ -149,13 +126,141 @@ def test_esky_freeze_future_condition_two_fix():
     setup, options, new_script = esky_setup('Working with Future Import', 'esky_future_working.py')
     insert_code(new_script,
                 "from __future__ import print_function",)
-                #"from future import standard_libry",
-                #"standard_library.install_aliasesra()")
     if PY3:
-        freeze_future.setup(setup, **options)
-        # freeze_future.setup(setup, **options)
-        assert run_script(new_script, freezer='esky')
+        freeze_future.setup(**options)
+        clean_exit, stderr = run_script(new_script, freezer='esky')
+        assert clean_exit
     else:
-        #~ with pytest.raises(Exception):
-        freeze_future.setup(setup, **options)
-        assert not run_script(new_script, freezer='esky')
+        freeze_future.setup(**options)
+        clean_exit, stderr = run_script(new_script, freezer='esky')
+        assert not clean_exit
+
+def test_esky_freeze_future_condition_three_fix():
+    '''explictly telling freeze future we are using esky and cxfreeze'''
+    setup, options, new_script = esky_setup('cxfreeze_esky_fixed', 'esky_cxfreeze_fixed.py')
+    insert_code(new_script,
+                "import past",)
+    setup(**options)
+    clean_exit, stderr = run_script(new_script, freezer='esky')
+    assert clean_exit
+
+def test_multiple_runs_of_setup_function():
+    '''make sure our fixes support multiple runs '''
+    from esky.bdist_esky import Executable
+    setup, options, new_script = esky_setup('Simple Working', WORKING_SCRIPT)
+    new_script2 = make_new_script_name('test_multiple_working.py')
+    insert_code(new_script2,'import sys')
+    options2 = copy.deepcopy(options)
+    options2['scripts'] = [new_script2]
+    options2['version'] = '0.2'
+    esky_zip_name = get_zip_name(options2)
+
+    # Now test that freeze future works as well
+    cleanup_dirs()
+
+    setup(**options)
+    clean_exit, stderr = run_script(new_script, freezer='esky')
+    assert clean_exit
+
+    # only works if we cleanup dirs.. same as original esky
+    cleanup_dirs()
+
+    setup(**options2)
+    if os.name == 'nt':
+        esky_zip_name = 'Simple Working-0.2.win32.zip'
+    clean_exit, stderr = run_script(new_script2, freezer='esky', zip_name=esky_zip_name)
+    assert clean_exit
+
+def test_esky_bdist_esky_patch_command():
+    '''this test is overkill just need to make sure patch command returns esky'''
+    # TODO this made it clear i need to force the selection of freezer rather trying than smart detect it
+    setup, options, new_script = esky_setup('Simple Working', WORKING_SCRIPT)
+    setup(**options)
+
+    new_script2 = make_new_script_name('testing_patching.py')
+    insert_code(new_script2,'import sys')
+    options2 = copy.deepcopy(options)
+    options2['scripts'] = [new_script2]
+    options2['script_args'] = ['bdist_esky_patch']
+    options2['version'] = '0.2'
+    setup(**options2)
+    esky_zip_name = get_zip_name(options2)
+    clean_exit, stderr = run_script(new_script2, freezer='esky', zip_name=esky_zip_name)
+    assert clean_exit
+
+def test_esky_patch():
+    '''some how when patching esky is losing some folders we moved into the esky, had to add a fix for it'''
+    tdir=os.getcwd()
+    uzdir = os.path.join(tdir,"unzip")
+    try:
+        really_rmtree(uzdir)
+    except Exception:
+        pass
+
+    setup, options, new_script = esky_setup('Simple Working', WORKING_SCRIPT)
+    setup(**options)
+
+    new_script2 = make_new_script_name('testing_patching.py')
+    insert_code(new_script2,'import sys')
+    options2 = copy.deepcopy(options)
+    options2['scripts'] = [new_script2]
+    options2['script_args'] = ['bdist_esky_patch']
+    options2['version'] = '2.0'
+    setup(**options2)
+
+    platform = get_platform()
+    deep_extract_zipfile(os.path.join(tdir,"dist","Simple Working-1.0.%s.zip"%(platform,)),uzdir)
+    with open(os.path.join(tdir,"dist","Simple Working-2.0.%s.from-1.0.patch"%(platform,)),"rb") as f:
+        esky.patch.apply_patch(uzdir,f)
+
+    filewithext = os.path.basename(new_script2)
+    file = os.path.splitext(filewithext)[0]
+    path_file = os.path.join(uzdir, file)
+    cmd = [path_file]
+    proc = subprocess.Popen(cmd, stderr=subprocess.PIPE)
+    errs = proc.communicate()
+    if not proc.returncode:
+        exit_code = True
+    else:
+        exit_code = False
+    assert exit_code
+    really_rmtree(uzdir)
+
+@pytest.mark.xfail(os.name == 'posix',reason='only applies on windwos')
+def test_esky_bundle_mscrvt():
+    # tdir=os.getcwd()
+    # uzdir = os.path.join(tdir,"unzip")
+    # try:
+    #     really_rmtree(uzdir)
+    # except Exception:
+    #     pass
+
+
+    setup, options, new_script = esky_setup('Simple Working', WORKING_SCRIPT)
+    # setup(**options)
+
+    new_script2 = make_new_script_name('testing_patching.py')
+    insert_code(new_script2,
+                'import sys',
+                'import os',
+                'versiondir = os.path.dirname(sys.executable)',
+                'for nm in os.listdir(versiondir):',
+                '    if nm.startswith("Microsoft.") and nm.endswith(".CRT"):',
+                '        msvcrt_dir = os.path.join(versiondir,nm)',
+                '        assert os.path.isdir(msvcrt_dir)',
+                '        assert len(os.listdir(msvcrt_dir)) >= 2',
+                '        break',
+                'else:',
+                '    assert False, "MSVCRT not bundled in version dir "+versiondir')
+    options2 = copy.deepcopy(options)
+    options2['options']['bdist_esky']['bundle_msvcrt'] = True
+    options2['scripts'] = [new_script2]
+    # options2['script_args'] = ['bdist_esky_patch']
+    options2['version'] = '2.0'
+    setup(**options2)
+
+        # esky_zip_name = 'Simple Working-0.2.win32.zip'
+    esky_zip_name = get_zip_name(options2)
+    clean_exit, stderr = run_script(new_script2, freezer='esky', zip_name=esky_zip_name)
+    pdb.set_trace()
+    assert clean_exit

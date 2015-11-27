@@ -3,7 +3,7 @@ from os.path import join
 import os
 
 NAME = 'foo'
-VERSION = '99'
+VERSION = '1.0'
 DESCRIPTION = 'so much foo bar AHH'
 PACKAGES_INCLUDES_EXCLUDES = dict(
 									packages = [],

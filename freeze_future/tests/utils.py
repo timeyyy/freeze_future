@@ -6,23 +6,31 @@ import shutil
 import os
 import errno
 import time
+import functools
 import zipfile
 import sys
 import subprocess
 import pdb
 import logging
+import contextlib
 
-import variables as V
+from esky.util import get_platform
+
+try:
+    import variables as V
+except ImportError:
+    from . import variables as V
+
 
 WORKING_SCRIPT = V.SCRIPT
 ORIGINAL_CWD = os.getcwd()
 
-def normalize_sysargs():
+def normalize_sysargs(arg='build'):#TODO delete this parameter
     '''Normailze sys args as setup function use them'''
     try:
-        sys.argv[1] = 'build'
+        sys.argv[1] = arg
     except IndexError:
-        sys.argv.append('build')
+        sys.argv.append(arg)
     try:
         del sys.argv[2:]
     except IndexError:
@@ -36,14 +44,14 @@ def normalize_sysargs():
 def cleanup_dirs():
     '''Remove the build dir as multiple programs built at once causes
     failures'''
-    os.chdir(ORIGINAL_CWD)
+    # os.chdir(ORIGINAL_CWD)
     try:
         really_rmtree(os.path.abspath('build'))
     except (IOError, OSError):
         pass
 
     try:
-        # Created by py2exe
+        # Created by py2exe and esky
         really_rmtree(os.path.abspath('dist'))
     except (IOError, OSError):
         pass
@@ -82,7 +90,19 @@ def insert_code(new_script, *code):
     file.save(new_script)
 
 
-def run_script(script, freezer='cxfreeze'):
+def preserve_cwd(function):
+    @functools.wraps(function)
+    def decorator(*args, **kwargs):
+        cwd = os.getcwd()
+        try:
+            return function(*args, **kwargs)
+        finally:
+            os.chdir(cwd)
+    return decorator
+
+
+@preserve_cwd
+def run_script(script, freezer='cxfreeze', zip_name=None):
     '''run the executable and return True if it ran!'''
     filewithext = os.path.basename(script)
     file = os.path.splitext(filewithext)[0]
@@ -92,31 +112,24 @@ def run_script(script, freezer='cxfreeze'):
         os.chdir(folder)
     elif freezer == 'py2exe':
         os.chdir('dist')
-    elif freezer == 'esky':     # TBD MAKE ESKY NOT ZIP PER DEFAULT
+    elif freezer == 'esky':     #TODO MAKE ESKY NOT ZIP PER DEFAULT
         os.chdir('dist')
         deploydir = os.getcwd()
-        zfname = os.listdir(deploydir)[0]
-        extract_zipfile(zfname,deploydir)
+        if not zip_name:
+            zip_name = os.listdir(deploydir)[0]
+        extract_zipfile(zip_name,deploydir)
         
     if freezer in ('distutils', 'setuptools'):
         cmd = ['python', '{0}.py'.format(file)] 
     else:
         cmd = [os.path.abspath(file)]
-    #exit_code = subprocess.call(cmd)
     proc = subprocess.Popen(cmd, stderr=subprocess.PIPE)
     errs = proc.communicate()
     os.chdir(ORIGINAL_CWD)
-    #logging.info(errs)
-    #print(errs)
-    #print(type(errs))
     if not proc.returncode:
         return True, errs[1]
     else:
         return False, errs[1]
-    #if not exit_code:
-    #    return True
-    #else:
-    #    return False
 
 
 class InMemoryWriter(list, object): #TBD UPDATE ORIGINAL WITH THIS
@@ -281,4 +294,99 @@ def extract_zipfile(source,target,name_filter=None):
     finally:
         zf.close()
 
+def create_zipfile(source,target,get_zipinfo=None,members=None,compress=None):
+    """Bundle the contents of a given directory into a zipfile.
 
+    The argument 'source' names the directory to read, while 'target' names
+    the zipfile to be written.
+
+    If given, the optional argument 'get_zipinfo' must be a function mapping
+    filenames to ZipInfo objects.  It may also return None to indicate that
+    defaults should be used, or a string to indicate that defaults should be
+    used with a new archive name.
+
+    If given, the optional argument 'members' must be an iterable yielding
+    names or ZipInfo objects.  Files will be added to the archive in the
+    order specified by this function.
+
+    If the optional argument 'compress' is given, it must be a bool indicating
+    whether to compress the files by default.  The default is no compression.
+    """
+    if not compress:
+        compress_type = zipfile.ZIP_STORED
+    else:
+        compress_type = zipfile.ZIP_DEFLATED
+    zf = zipfile.ZipFile(target,"w",compression=compress_type)
+    if members is None:
+        def gen_members():
+            for (dirpath,dirnames,filenames) in os.walk(source):
+                for fn in filenames:
+                    yield os.path.join(dirpath,fn)[len(source)+1:]
+        members = gen_members()
+    for fpath in members:
+        if isinstance(fpath,zipfile.ZipInfo):
+            zinfo = fpath
+            fpath = os.path.join(source,zinfo.filename)
+        else:
+            if get_zipinfo:
+                zinfo = get_zipinfo(fpath)
+            else:
+                zinfo = None
+            fpath = os.path.join(source,fpath)
+        if os.path.islink(fpath):
+            # For information about adding symlinks to a zip file, see
+            # https://mail.python.org/pipermail/python-list/2005-June/322180.html
+            dest = os.readlink(fpath)
+            if zinfo is None:
+                zinfo = zipfile.ZipInfo()
+                zinfo.filename = fpath[len(source)+1:]
+            elif isinstance(zinfo,basestring):
+                link = zinfo
+                zinfo = zipfile.ZipInfo()
+                zinfo.filename = link
+            else: # isinstance(zinfo,zipfile.ZipInfo)
+                pass
+            zinfo.create_system = 3
+            zinfo.external_attr = 2716663808 # symlink: 0xA1ED0000
+            zf.writestr(zinfo,dest)
+        else: # not a symlink
+            if zinfo is None:
+                zf.write(fpath,fpath[len(source)+1:])
+            elif isinstance(zinfo,basestring):
+                zf.write(fpath,zinfo)
+            else:
+                with open(fpath,"rb") as f:
+                    zf.writestr(zinfo,f.read())
+    zf.close()
+
+def setup_logger(log_file):
+    '''One function call to set up logging with some nice logs about the machine'''
+    logging.basicConfig(
+        filename=log_file,
+        filemode='w',
+        level=logging.DEBUG,
+        format='%(asctime)s:%(levelname)s: %(message)s')  # one run
+
+@contextlib.contextmanager
+def remember_cwd():
+    curdir= os.getcwd()
+    try: yield
+    finally: os.chdir(curdir)
+
+def get_zip_name(options):
+    '''mirrors the esky behaviour of creating a zipfile name, '''
+    def get_name():
+        try:
+            return options['name'] or "UNKNOWN"
+        except KeyError:
+            return "UNKNOWN"
+    def get_version():
+        try:
+            return options['version'] or "0.0.0"
+        except KeyError:
+            return "0.0.0"
+
+    fullname = "%s-%s" % (get_name(), get_version())
+    platform = get_platform()
+    zfname = os.path.join("%s.%s.zip"%(fullname,platform,))
+    return zfname

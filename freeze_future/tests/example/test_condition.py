@@ -12,7 +12,7 @@ try:
 	import tkinter as tk
 except ImportError:
 	import Tkinter as tk
-	
+
 LABELS = ['ham', 'spam', 'foo', 'bar']
 
 #~ time.sleep(0.1)
@@ -23,4 +23,3 @@ for text in LABELS:
 	tk.Label(root, text=text).pack()
 root.after(100, sys.exit)
 root.mainloop()
-

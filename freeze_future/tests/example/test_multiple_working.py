@@ -2,14 +2,7 @@
 Example module for testing this should work fine on 2 and 3
 """
 
-from future import standard_library
-standard_library.install_aliases()
-import urllib.request, urllib.error, urllib.parse
-import collections
-from itertools import filterfalse
-from subprocess import getoutput
-from builtins import str
-from builtins import range
+import sys
 
 import sys
 import time

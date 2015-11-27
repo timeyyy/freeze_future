@@ -49,7 +49,7 @@ def test_setuptools_detected():
 def test_setuptools_return_when_no_future_import():
     '''Make sure we don't do any work if not using the future library'''    
     setup, options, name = setuptools_setup('working script no future should return', WORKING_SCRIPT)
-    assert freeze_future.setup(setup, **options) == False
+    assert freeze_future.setup(**options) == False
 
 def test_setuptools_return_when_using_future():
     '''Tests that a script with the future imports runs as normal'''            
@@ -58,7 +58,7 @@ def test_setuptools_return_when_using_future():
                 "from __future__ import print_function",
                 "from future import standard_library",
                 "standard_library.install_aliases()")
-    assert freeze_future.setup(setup, **options) == False
+    assert freeze_future.setup(**options) == False
 
 def test_setuptools_working():
     '''Test a small script to make sure it builds properly'''
@@ -81,8 +81,8 @@ def test_setuptools_condition():
                 "from builtins import range",)
     
     setup(**options)
-    assert run_script(new_script, freezer='setuptools')
-
+    clean_exit, stderr = run_script(new_script, freezer='setuptools')
+    assert clean_exit
 
 def test_setuptools_condition2():
     '''Testing adding the future imports doesn't fuck up the building'''
@@ -92,4 +92,5 @@ def test_setuptools_condition2():
                 "from __future__ import print_function")
 
     setup(**options)
-    assert run_script(new_script, freezer='setuptools')
+    clean_exit, stderr = run_script(new_script, freezer='setuptools')
+    assert clean_exit

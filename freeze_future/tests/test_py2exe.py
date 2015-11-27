@@ -60,20 +60,17 @@ def test_freeze_future_running_when_using_future_with_py2exe():
                 "from __future__ import print_function",
                 "from future import standard_library",
                 "standard_library.install_aliases()")
-
-    dummy_setup = lambda *args, **kwargs: 0
-
     if PY3:
-        assert freeze_future.setup(dummy_setup, **options) == False
+        assert freeze_future.setup(test_setup=True, **options) == False
     else:
-        assert freeze_future.setup(dummy_setup, **options) == True
+        assert freeze_future.setup(test_setup=True, **options) == True
 
 
 
 def test_py2exe_freeze_future_return_when_no_future_import():
     '''Make sure we don't do any work if not using the future library'''
     setup, options, name = py2exe_setup('working script no future should return', WORKING_SCRIPT)
-    assert freeze_future.setup(setup, **options) == False
+    assert freeze_future.setup(**options) == False
 
 
 def test_p2exe_working():
@@ -122,5 +119,5 @@ def test_py2exe_fix_future():
                 "from builtins import str",
                 "from builtins import range",)
 
-    freeze_future.setup(setup, **options)
+    freeze_future.setup(**options)
     assert run_script(new_script, freezer='py2exe')
