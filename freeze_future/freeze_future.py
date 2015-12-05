@@ -1,30 +1,17 @@
 '''
-When using the future library, freezing in python2 stopped working,
-Made a whole bunch of tests and we find out that the problem is with using
-the standard_aliases function
+When using the future library, a few problems caused by our freezers are popping up
+This is used for figuring out what is going wrong
 
-Currently alfa stage, easy enought to support cxfreeze and py2exe but esky is harder hmm
-
-This code is a fix that should run only if using python2 to freeze, adds
-excpetions and so on.
+This code is potential fixes that we will incorporate into esky f_py2exe.py f_py2app.app etc
 
 the meat and potatoes is actually the test files
-makes sure all the conditions for why we are using this for the
-different modules hold
 '''
 import sys
 import os
-import pdb
-import logging
 import zipfile
-import shutil
-import future
-import tempfile
 
-from .tests.utils import setup_logger, preserve_cwd, extract_zipfile, create_zipfile,\
+from .tests.utils import preserve_cwd, extract_zipfile, create_zipfile,\
                             really_rmtree, get_zip_name
-
-setup_logger('fuck2.txt')
 
 if sys.version_info[0] > 2:
     PY3 = True
@@ -215,7 +202,7 @@ FUTURE_PACKAGES = ["future",
 def compulsory_fixers_start(freezer, **options):
     '''we just always apply this fix as it doesnt really hurt anything
     solves problem of datafiles being in zipfiles cxfreeze test failure condition 3'''
-    if freezer == 'cxfreeze': # TODO esky actually could be any of the freezer have to do more work and be specific fuck
+    if freezer == 'cxfreeze':
         options.setdefault('options', {}).setdefault('build_exe', {}).setdefault('zip_includes', [])
         zipincludes = options['options']['build_exe']['zip_includes']
     elif freezer == 'esky':
@@ -247,7 +234,7 @@ def compulsory_fixers_end(freezer, **options):
     if freezer in ('cxfreeze', 'esky'):
         modules_to_unzip = ('lib2to3',)
         zip_archive_name = 'library.zip'
-        if freezer == 'cxfreeze':
+        if freezer in ('cxfreeze', 'py2exe'):
             os.chdir('build')
             folder = os.listdir(os.getcwd())[0] #TODO multiple setupfiles at once
         elif freezer == 'esky':
@@ -363,7 +350,7 @@ def setup(test_setup=False, **options):
     else:
         dist_setup = get_setup_function(freezer)
     executables = get_executables(freezer, options)
-    if not PY3 or freezer == 'esky':
+    if not PY3 or freezer in ('esky', 'py2exe'):
         if freezer in ('cxfreeze', 'py2exe', 'esky'):
             if using_future(freezer, executables) or freezer == 'esky':
                 if freezer == 'cxfreeze':
@@ -377,7 +364,14 @@ def setup(test_setup=False, **options):
                     options['options']['py2exe'].setdefault('packages', [])
                     options['options']['py2exe']['excludes'].extend(EXCLUDES_LIST)
                     options['options']['py2exe']['packages'].extend(INCLUDES_LIST)
-                
+                    if PY3:
+                        py2exe_includes = ('pywintypes',
+                                           'test'
+                                           'test.test_support',
+                                           'future.moves.test.support',
+                                           'builtins')
+                        options['options']['py2exe']['packages'].extend(py2exe_includes)
+
                 elif freezer == 'esky':
                     options.setdefault('options', {}).setdefault('bdist_esky', {}).setdefault('includes', [])
                     options.setdefault('options', {}).setdefault('bdist_esky', {}).setdefault('excludes', [])
@@ -389,7 +383,11 @@ def setup(test_setup=False, **options):
 
                     elif os.name == 'nt':
                         if not PY3:
+                            #for cxfreeze under esky
                             options['options']['bdist_esky']['includes'].extend(ESKY_INCLUDES_LIST)
+                            #for py2eexe under esky
+                            options['options']['bdist_esky']['includes'].extend(INCLUDES_LIST)
+                            options['options']['bdist_esky']['excludes'].extend(EXCLUDES_LIST)
 
                     # options['options'].setdefault('freezer_options', {}).setdefault('build_exe',{}).setdefault('packages', [])
                     # options['options']['freezer_options']['build_exe'].setdefault('excludes', [])
@@ -414,3 +412,45 @@ def setup(test_setup=False, **options):
         compulsory_fixers_end(freezer, **options)
     return False
 
+def freeze_future_fix(freezer):
+    '''
+    if a library uses open() on a file that now is moved in our library.zip, it will fail
+    we unzip the package data and library so that it now works
+    '''
+    class Unnest(Exception):
+        '''This is raised to exit out of a nested loop'''
+        pass
+
+    modules_to_unzip = ('lib2to3',)
+    zip_archive_name = 'library.zip'
+    os.chdir(freezer.targetDir)
+    archive = zipfile.ZipFile(zip_archive_name)
+    for file in archive.namelist():
+        for bad_module in modules_to_unzip:
+            if file.startswith(bad_module + '/'):
+                archive.extract(file, os.getcwd())
+    archive.close()
+    # now copy over any data files as well (they had problems getting sucked in from
+    # our freezer)
+    if os.name == 'nt':
+        data_path = os.path.join(sys.exec_prefix, 'Lib', 'lib2to3')
+    elif 'linux' in sys.platform:
+        try:
+            # locating the folder path on linux...
+            for folder in sys.path:
+                if folder:
+                    for file in os.listdir(folder):
+                        for module in modules_to_unzip:
+                            if file == module:
+                                data_path = os.path.join(folder, module)
+                                raise Unnest
+        except Unnest:
+            pass
+        else:
+            raise Exception('One of our required modules could not be found')
+
+    data_files = (('Grammar.txt', 'PatternGrammar.txt'),)
+    for datas, module in zip(data_files, modules_to_unzip):
+        for data in datas:
+            shutil.copy(os.path.join(data_path, data), os.path.join(module, data))
+            # Todo delete the file from the zip?

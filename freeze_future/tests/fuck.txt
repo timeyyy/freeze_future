@@ -1,7 +1,0 @@
-============================= test session starts =============================
-platform win32 -- Python 2.7.10 -- py-1.4.30 -- pytest-2.7.2
-rootdir: C:\Users\timeyyy\Dropbox\programming\freeze_future, inifile: 
-collected 12 items
-
-test_esky.py 
->>>>>>>>>>>>>>>>>>> PDB set_trace (IO-capturing turned off) >>>>>>>>>>>>>>>>>>>

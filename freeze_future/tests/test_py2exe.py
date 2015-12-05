@@ -78,34 +78,71 @@ def test_p2exe_working():
     We have to insert import py2exe into our setup script'''
     setup, options, name = py2exe_setup('Simple Working', WORKING_SCRIPT)
     setup(**options)
-    assert run_script(WORKING_SCRIPT, freezer='py2exe')
+    clean_exit, stderr = run_script(WORKING_SCRIPT, freezer='py2exe')
+    assert clean_exit
 
 
-def test_py2exe_and_future():
+def test_py2exe_failure_condition():
     '''
     Testing adding the future imports doesn't fuck up the building on python3
     Fucks up python2 though'''
-    pdb.set_trace()
     setup, options, new_script = py2exe_setup('Working with Future Import', 'py2exe_future_working.py')
 
     insert_code(new_script,
                 "from future import standard_library",
                 "standard_library.install_aliases()")
     if PY3:
-        pdb.set_trace()
-        # sys.argv[0] = os.path.basename(new_script)
-        # sys.argv[1] = 'py2exe'
-        print(sys.argv)
-        setup(**options)
-        assert run_script(new_script, freezer='py2exe')
+        with pytest.raises(AttributeError):
+            setup(**options)
     else:
         setup(**options)
-        assert not run_script(new_script, freezer='py2exe')
+        clean_exit, stderr = run_script(new_script, freezer='py2exe')
+        assert not clean_exit
+
+def test_py2exe_failure_condition2():
+    '''this module was playing up so testing it ..'''
+    setup, options, new_script = py2exe_setup('test_condition2', 'test_condition2.py')
+    insert_code(new_script,
+                "from __future__ import print_function",)
+    setup(**options)
+    clean_exit, stderr = run_script(new_script, freezer='py2exe')
+    assert clean_exit
+
+def test_py2exe_failure_condition3():
+    ''' basically using open function on a datafile will fail if the modulea and datafiles
+    are inside a zip as open doesn't know how to look in a zip.
+    Error -> No such file or directory grammer.txt
+    https://bitbucket.org/anthony_tuininga/cx_freeze/issues/151/using-modules-that-use-open-on-data-files'''
+    setup, options, new_script = py2exe_setup('test_condition3', 'test_condition3.py')
+    insert_code(new_script,
+                "import past")
+    # 'from past.builtins import basestring')
+    setup(**options)
+    clean_exit, stderr = run_script(new_script, freezer='py2exe')
+    assert not clean_exit
+
+# THIS TEST IS MAKING SURE THE FREEZEFUTURE CODE IS WORKING PROPERLY
+def test_freeze_future_running_when_using_future_with_py2exe():
+    '''Tests that a script with the future imports gets recognized and the freeze future code is run'''
+    setup, options, new_script = py2exe_setup('should run the setup stuff', 'py2exe_reuturn_working.py')
+    insert_code(new_script,
+                "from future import standard_library",
+                "standard_library.install_aliases()")
+    if PY3:
+        assert freeze_future.setup(test_setup=True, **options) == False
+    else:
+        assert freeze_future.setup(test_setup=True, **options) == True
+# THIS TEST IS MAKING SURE THE FREEZEFUTURE CODE IS WORKING PROPERLY
+
+def test_py2exe_freeze_future_return_when_no_future_import():
+    '''Make sure we don't do any work if not using the future library'''
+    setup, options, new_script = py2exe_setup('working script no future should return', WORKING_SCRIPT)
+    assert freeze_future.setup(**options) == False
 
 
-def test_py2exe_fix_future():
-    '''tests our fix when importing everything under the sun! also
-    import builtins'''
+@pytest.mark.b
+def test_py2exe_freeze_future_condition_one_fix():
+    '''tests our fix when importing everything under the sun!, just another sanity check'''
     setup, options, new_script = py2exe_setup('py2exe fixed', 'py2exe_fixed.py')
 
     insert_code(new_script,
@@ -120,4 +157,16 @@ def test_py2exe_fix_future():
                 "from builtins import range",)
 
     freeze_future.setup(**options)
-    assert run_script(new_script, freezer='py2exe')
+    clean_exit, stderr = run_script(new_script, freezer='py2exe')
+    assert clean_exit
+
+@pytest.mark.f
+def test_py2exe_future_condition_3_fix():
+    '''tests our fix when importing everything under the sun! also
+    import builtins TBD this test is a bit flakey when running the entire suite and doing tests on py 2 and py3'''
+    setup, options, new_script = py2exe_setup('py2exe fixed', 'py2exe_fixed.py')
+    insert_code(new_script,
+                'import past')
+    freeze_future.setup(**options)
+    clean_exit, stderr = run_script(new_script, freezer='py2exe')
+    assert clean_exit

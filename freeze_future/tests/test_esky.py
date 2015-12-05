@@ -8,9 +8,6 @@ import sys
 import os
 import subprocess
 import pdb
-import copy
-import time
-import zipfile
 import pytest
 import copy
 
@@ -27,6 +24,8 @@ from utils import really_rmtree, InMemoryWriter, extract_zipfile, cleanup_dirs, 
 
 WORKING_SCRIPT = V.SCRIPT
 ORIGINAL_CWD = os.getcwd()
+
+FREEZER_TO_RUN_WITH_ESKY = 'py2exe'
 
 try:
     import setuptools
@@ -55,13 +54,15 @@ def esky_setup(name, script, **changes):
 
     options = {"options":
                    {"bdist_esky":
-                        {"freezer_module": "cxfreeze"}}}
+                        {"freezer_module": FREEZER_TO_RUN_WITH_ESKY }}}
 
     base_options['scripts'] = [new_script]
     base_options.update({'script_args':["bdist_esky"]})
     base_options.update(options)
     # return dist_setup, base_options, new_script
+    #FIRST TEST USING THE FREEZE_FUTURE AND THE FIXES DEVELOPED THERE, WHEN ALL PASSING CHANGE TO distutils.setup
     return freeze_future.setup, base_options, new_script
+    # return dist_setup, base_options, new_script
 
 def test_esky_detected():
     '''make sure freeze_future knows that esky is being used'''
@@ -74,6 +75,7 @@ def test_esky_builds_and_runs():
     setup, options, new_script = esky_setup('Simple Working', WORKING_SCRIPT)
     setup(**options)
     clean_exit, stderr = run_script(WORKING_SCRIPT, freezer='esky')
+    print(stderr)
     assert clean_exit
 
 def test_esky_failure_condition_fixed():
@@ -89,6 +91,7 @@ def test_esky_failure_condition_fixed():
 
 @pytest.mark.xfail(reason="original esky failing under this condition")
 def test_esky_failure_condition2_fixed():
+    '''this error isn't mine to fix here, it is not present in the freezers o.0'''
     setup, options, new_script = esky_setup('test_condition2', 'test_condition2.py')
     insert_code(new_script,
                 "from __future__ import print_function",)
@@ -189,7 +192,7 @@ def test_esky_bdist_esky_patch_command():
     assert clean_exit
 
 def test_esky_patch():
-    '''some how when patching esky is losing some folders we moved into the esky, had to add a fix for it'''
+    '''need to have our esky fixes developed in freeze future moved to f_py2exe or f_cxfrexe etc for patchingo work'''
     tdir=os.getcwd()
     uzdir = os.path.join(tdir,"unzip")
     try:
@@ -227,15 +230,8 @@ def test_esky_patch():
     really_rmtree(uzdir)
 
 @pytest.mark.xfail(os.name == 'posix',reason='only applies on windwos')
+@pytest.mark.f
 def test_esky_bundle_mscrvt():
-    # tdir=os.getcwd()
-    # uzdir = os.path.join(tdir,"unzip")
-    # try:
-    #     really_rmtree(uzdir)
-    # except Exception:
-    #     pass
-
-
     setup, options, new_script = esky_setup('Simple Working', WORKING_SCRIPT)
     # setup(**options)
 
@@ -262,5 +258,4 @@ def test_esky_bundle_mscrvt():
         # esky_zip_name = 'Simple Working-0.2.win32.zip'
     esky_zip_name = get_zip_name(options2)
     clean_exit, stderr = run_script(new_script2, freezer='esky', zip_name=esky_zip_name)
-    pdb.set_trace()
     assert clean_exit

@@ -63,15 +63,16 @@ def cleanup_dirs():
 
 
 def make_new_script_name(name):
-    '''Script path taken from the working script and added to our name'''
+    '''generates a new absolute path + name to our script'''
     new_script = os.path.join(os.path.dirname(WORKING_SCRIPT), name)
     return new_script
 
 
 def insert_code(new_script, *code):
-    '''Insert code into our working script and save as'''
+    '''Insert code into our working script and save as, you can easily
+    add code and see if the code still works! '''
     def find_start(file):
-        '''we want to insert after doc string, find the position'''
+        #we want to insert after doc string, find the position
         for i, line in enumerate(file):
             if i == 0:
                 continue
@@ -91,6 +92,7 @@ def insert_code(new_script, *code):
 
 
 def preserve_cwd(function):
+    '''preserve the cwd during a function call'''
     @functools.wraps(function)
     def decorator(*args, **kwargs):
         cwd = os.getcwd()
@@ -358,14 +360,6 @@ def create_zipfile(source,target,get_zipinfo=None,members=None,compress=None):
                 with open(fpath,"rb") as f:
                     zf.writestr(zinfo,f.read())
     zf.close()
-
-def setup_logger(log_file):
-    '''One function call to set up logging with some nice logs about the machine'''
-    logging.basicConfig(
-        filename=log_file,
-        filemode='w',
-        level=logging.DEBUG,
-        format='%(asctime)s:%(levelname)s: %(message)s')  # one run
 
 @contextlib.contextmanager
 def remember_cwd():

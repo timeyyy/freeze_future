@@ -6,10 +6,6 @@ from __future__ import print_function
 from future import standard_library
 standard_library.install_aliases()
 
-from __future__ import print_function
-from future import standard_library
-standard_library.install_aliases()
-
 import sys
 import time
 
@@ -17,7 +13,7 @@ try:
 	import tkinter as tk
 except ImportError:
 	import Tkinter as tk
-	
+
 LABELS = ['ham', 'spam', 'foo', 'bar']
 
 #~ time.sleep(0.1)
@@ -28,4 +24,3 @@ for text in LABELS:
 	tk.Label(root, text=text).pack()
 root.after(100, sys.exit)
 root.mainloop()
-
