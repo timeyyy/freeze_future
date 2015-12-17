@@ -202,6 +202,7 @@ FUTURE_PACKAGES = ["future",
 def compulsory_fixers_start(freezer, **options):
     '''we just always apply this fix as it doesnt really hurt anything
     solves problem of datafiles being in zipfiles cxfreeze test failure condition 3'''
+    return
     if freezer == 'cxfreeze':
         options.setdefault('options', {}).setdefault('build_exe', {}).setdefault('zip_includes', [])
         zipincludes = options['options']['build_exe']['zip_includes']
@@ -248,6 +249,8 @@ def compulsory_fixers_end(freezer, **options):
             folder = os.path.join(deploydir, deploydir.split(os.sep)[-1])
         # extract the problem files
         os.chdir(folder)
+        freeze_future_fix()
+        return
         archive = zipfile.ZipFile(zip_archive_name)
         for file in archive.namelist():
             for bad_module in modules_to_unzip:
@@ -412,7 +415,7 @@ def setup(test_setup=False, **options):
         compulsory_fixers_end(freezer, **options)
     return False
 
-def freeze_future_fix(freezer):
+def freeze_future_fix():
     '''
     if a library uses open() on a file that now is moved in our library.zip, it will fail
     we unzip the package data and library so that it now works
@@ -423,7 +426,6 @@ def freeze_future_fix(freezer):
 
     modules_to_unzip = ('lib2to3',)
     zip_archive_name = 'library.zip'
-    os.chdir(freezer.targetDir)
     archive = zipfile.ZipFile(zip_archive_name)
     for file in archive.namelist():
         for bad_module in modules_to_unzip:

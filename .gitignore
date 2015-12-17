@@ -1,8 +1,10 @@
-freeze_future/tests/build/*
-freeze_future/tests/dist/*
-freeze_future/tests/example/__pycache__/*
+freeze_future/tests/build*
+freeze_future/tests/dist*
+freeze_future/tests/example/__pycache__*
 freeze_future/__pycache/*
 freeze_future/tests/__pycache/*
 *.txt
 *.log
 *~
+*.pyc
+

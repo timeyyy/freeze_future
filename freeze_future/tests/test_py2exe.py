@@ -52,6 +52,7 @@ def test_detected():
     assert freeze_future.detect_freezer(options) == 'py2exe'
 
 
+@pytest.mark.a
 def test_freeze_future_running_when_using_future_with_py2exe():
     '''Tests that a script with the future imports gets recognized and we run
     our code'''
