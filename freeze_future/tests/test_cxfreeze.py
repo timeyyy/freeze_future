@@ -122,7 +122,7 @@ def test_cxfreeze_freeze_future_return_when_no_future_import():
     assert freeze_future.setup(**options) == False
 
 
-@pytest.mark.xfail(sys.version_info >= (3,0) and os.name == 'nt' ,
+@pytest.mark.xfail(os.name == 'nt' ,
                    reason="on windows py3 permission errors sometimes")
 def test_cxfreeze_freeze_future_condition_one_fix():
     '''tests our fix when importing everything under the sun!, just another sanity check'''

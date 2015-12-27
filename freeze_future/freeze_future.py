@@ -8,6 +8,7 @@ the meat and potatoes is actually the test files
 '''
 import sys
 import os
+import shutil
 import zipfile
 
 from .tests.utils import preserve_cwd, extract_zipfile, create_zipfile,\
@@ -202,10 +203,22 @@ FUTURE_PACKAGES = ["future",
 def compulsory_fixers_start(freezer, **options):
     '''we just always apply this fix as it doesnt really hurt anything
     solves problem of datafiles being in zipfiles cxfreeze test failure condition 3'''
-    return
     if freezer == 'cxfreeze':
         options.setdefault('options', {}).setdefault('build_exe', {}).setdefault('zip_includes', [])
         zipincludes = options['options']['build_exe']['zip_includes']
+    elif freezer == 'py2exe':
+        # options.setdefault('options', {}).setdefault('build_exe', {}).setdefault('data_files', [])
+        # data_files = options['options']['build_exe']['data_files']
+        options.setdefault('options', {}).setdefault('py2exe', {})
+        py2stuff = options['options']['py2exe']
+        py2stuff['bundle_files'] = 3
+        options['zipfile'] = 'foo/bar.zip'
+        py2stuff['skip_archive'] = True
+        options.setdefault('data_files', [])
+        # data_files = options['data_files']
+        # data_files.extend(['lib2to3', [r'C:/Python34/Lib/lib2to3/Grammar.txt', r'C:/Python34/Lib/lib2to3/PatternGrammar.txt']])
+                           # ('lib2to3', [r'C:/Python34/Lib/lib2to3/PatternGrammar.txt'])))
+        return
     elif freezer == 'esky':
         options.setdefault('options', {}).setdefault('bdist_esky', {}).setdefault('freezer_options', {}).setdefault('zipIncludes', [])
         zipincludes = options['options']['bdist_esky']['freezer_options']['zipIncludes']
@@ -232,12 +245,14 @@ def compulsory_fixers_start(freezer, **options):
 @preserve_cwd
 def compulsory_fixers_end(freezer, **options):
     '''gotta extract the files from the zip so it find the module next to the zip'''#TODO delete the problem files from the library.zip as well
-    if freezer in ('cxfreeze', 'esky'):
+    if freezer in ('cxfreeze', 'esky', 'py2exeNOT'):
         modules_to_unzip = ('lib2to3',)
         zip_archive_name = 'library.zip'
-        if freezer in ('cxfreeze', 'py2exe'):
+        if freezer == 'cxfreeze':
             os.chdir('build')
             folder = os.listdir(os.getcwd())[0] #TODO multiple setupfiles at once
+        elif freezer == 'py2exe':
+            os.chdir('dist')
         elif freezer == 'esky':
             os.chdir('dist')
             zfname = os.path.join(os.getcwd(), get_zip_name(options))
@@ -248,15 +263,17 @@ def compulsory_fixers_end(freezer, **options):
             os.remove(zfname)
             folder = os.path.join(deploydir, deploydir.split(os.sep)[-1])
         # extract the problem files
-        os.chdir(folder)
+        try:
+            os.chdir(folder)
+        except UnboundLocalError:
+            pass
         freeze_future_fix()
-        return
-        archive = zipfile.ZipFile(zip_archive_name)
-        for file in archive.namelist():
-            for bad_module in modules_to_unzip:
-                if file.startswith(bad_module + '/'):
-                    archive.extract(file, os.getcwd())
-        archive.close()
+        # archive = zipfile.ZipFile(zip_archive_name)
+        # for file in archive.namelist():
+        #     for bad_module in modules_to_unzip:
+        #         if file.startswith(bad_module + '/'):
+        #             archive.extract(file, os.getcwd())
+        # archive.close()
 
         if freezer == 'esky':
             os.chdir('..')
@@ -331,7 +348,6 @@ def get_executables(freezer, options):
         return options['scripts']
     else:
         return options['scripts']
-from setuptools import setup
 
 def get_setup_function(freezer):
     if freezer == 'cxfreeze':
@@ -367,13 +383,13 @@ def setup(test_setup=False, **options):
                     options['options']['py2exe'].setdefault('packages', [])
                     options['options']['py2exe']['excludes'].extend(EXCLUDES_LIST)
                     options['options']['py2exe']['packages'].extend(INCLUDES_LIST)
-                    if PY3:
-                        py2exe_includes = ('pywintypes',
-                                           'test'
-                                           'test.test_support',
-                                           'future.moves.test.support',
-                                           'builtins')
-                        options['options']['py2exe']['packages'].extend(py2exe_includes)
+                    # if PY3:
+                    #     py2exe_includes = ('pywintypes',
+                    #                        'test'
+                    #                        'test.test_support',
+                    #                        'future.moves.test.support',
+                    #                        'builtins')
+                    #     options['options']['py2exe']['packages'].extend(py2exe_includes)
 
                 elif freezer == 'esky':
                     options.setdefault('options', {}).setdefault('bdist_esky', {}).setdefault('includes', [])
@@ -403,6 +419,7 @@ def setup(test_setup=False, **options):
                     # options['options']['freezer_options']['bdist_esky']['packages'].extend(INCLUDES_LIST)
                 if not test_setup:
                     compulsory_fixers_start(freezer, **options)
+                freezer = detect_freezer(options)
                 dist_setup(**options)
                 if not test_setup:
                     compulsory_fixers_end(freezer, **options)

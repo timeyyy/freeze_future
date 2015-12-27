@@ -25,7 +25,8 @@ from utils import really_rmtree, InMemoryWriter, extract_zipfile, cleanup_dirs, 
 WORKING_SCRIPT = V.SCRIPT
 ORIGINAL_CWD = os.getcwd()
 
-FREEZER_TO_RUN_WITH_ESKY = 'py2exe'
+FREEZER_TO_RUN_WITH_ESKY = 'cxfreeze'
+assert FREEZER_TO_RUN_WITH_ESKY in ('cxfreeze', 'py2exe', 'esky', 'py2app')
 
 try:
     import setuptools
@@ -151,7 +152,7 @@ def test_multiple_runs_of_setup_function():
     '''make sure our fixes support multiple runs '''
     from esky.bdist_esky import Executable
     setup, options, new_script = esky_setup('Simple Working', WORKING_SCRIPT)
-    new_script2 = make_new_script_name('test_multiple_working.py')
+    new_script2 = make_new_script_name('test_multiple_working.py'BE
     insert_code(new_script2,'import sys')
     options2 = copy.deepcopy(options)
     options2['scripts'] = [new_script2]
@@ -170,7 +171,8 @@ def test_multiple_runs_of_setup_function():
 
     setup(**options2)
     if os.name == 'nt':
-        esky_zip_name = 'Simple Working-0.2.win32.zip'
+        platform = get_platform()
+        esky_zip_name = 'Simple Working-0.2.%s.zip' % platform
     clean_exit, stderr = run_script(new_script2, freezer='esky', zip_name=esky_zip_name)
     assert clean_exit
 

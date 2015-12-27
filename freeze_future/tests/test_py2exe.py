@@ -40,7 +40,7 @@ def py2exe_setup(name, script, **changes):
     base_options = copy.deepcopy(V.DEFAULT_OPTIONS)
     changes['windows'] = [new_script]
     base_options.update(changes)
-    base_options['py2exe'] = base_options['options']['build_exe']
+    base_options['options']['py2exe'] = {}
     del base_options['options']['build_exe']
     changes.update({'name':name})
     return setup, base_options, new_script
@@ -52,7 +52,6 @@ def test_detected():
     assert freeze_future.detect_freezer(options) == 'py2exe'
 
 
-@pytest.mark.a
 def test_freeze_future_running_when_using_future_with_py2exe():
     '''Tests that a script with the future imports gets recognized and we run
     our code'''
@@ -170,4 +169,10 @@ def test_py2exe_future_condition_3_fix():
                 'import past')
     freeze_future.setup(**options)
     clean_exit, stderr = run_script(new_script, freezer='py2exe')
+    if not clean_exit:
+        with open(r'dist/py2exe_fixed.log', newline='\n') as log:
+            from pprint import pprint
+            pprint(log.readlines())
+            import pdb;pdb.set_trace()
+
     assert clean_exit

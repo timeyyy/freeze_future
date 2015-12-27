@@ -2,9 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a0e29f22-3594-4638-9c37-ec567945d500" name="Default" comment="">
+      <change type="DELETED" beforePath="$PROJECT_DIR$/freeze_future/tests/.goutputstream-MNUD3X" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/freeze_future/tests/esky_return_working.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/freeze_future/tests/esky_reuturn_working.py" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/freeze_future.iml" afterPath="$PROJECT_DIR$/.idea/freeze_future.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/freeze_future/freeze_future.py" afterPath="$PROJECT_DIR$/freeze_future/freeze_future.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/freeze_future/tests/example/py2exe_fixed.py" afterPath="$PROJECT_DIR$/freeze_future/tests/example/py2exe_fixed.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/freeze_future/tests/test_cxfreeze.py" afterPath="$PROJECT_DIR$/freeze_future/tests/test_cxfreeze.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/freeze_future/tests/test_esky.py" afterPath="$PROJECT_DIR$/freeze_future/tests/test_esky.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/freeze_future/tests/test_py2exe.py" afterPath="$PROJECT_DIR$/freeze_future/tests/test_py2exe.py" />
     </list>
     <ignored path="freeze_future.iws" />
@@ -29,11 +35,21 @@
       <file leaf-file-name="freeze_future.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/freeze_future/freeze_future.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-15.740741">
-              <caret line="285" column="15" selection-start-line="285" selection-start-column="15" selection-end-line="285" selection-end-column="15" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="451" column="83" selection-start-line="451" selection-start-column="83" selection-end-line="451" selection-end-column="83" />
               <folding>
                 <element signature="e#286#296#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="runtime.py" pinned="false" current-in-tab="false">
+        <entry file="file://C:/Python34/Lib/site-packages/py2exe/runtime.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="637" column="0" selection-start-line="637" selection-start-column="0" selection-end-line="637" selection-end-column="0" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -52,7 +68,7 @@
         <entry file="file://$PROJECT_DIR$/freeze_future/tests/test_cxfreeze.py">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="17" column="0" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
+              <caret line="151" column="0" selection-start-line="151" selection-start-column="0" selection-end-line="151" selection-end-column="0" />
               <folding>
                 <element signature="e#0#37#0" expanded="true" />
               </folding>
@@ -60,11 +76,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="test_py2exe.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="test_py2exe.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/freeze_future/tests/test_py2exe.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.72421527">
-              <caret line="65" column="8" selection-start-line="65" selection-start-column="8" selection-end-line="65" selection-end-column="8" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="177" column="3" selection-start-line="177" selection-start-column="3" selection-end-line="177" selection-end-column="3" />
               <folding>
                 <element signature="e#81#118#0" expanded="true" />
               </folding>
@@ -72,11 +88,23 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="test_esky.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/freeze_future/tests/test_esky.py">
+      <file leaf-file-name="variables.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/freeze_future/tests/variables.py">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="243" column="77" selection-start-line="243" selection-start-column="77" selection-end-line="243" selection-end-column="77" />
+              <caret line="14" column="29" selection-start-line="14" selection-start-column="29" selection-end-line="14" selection-end-column="29" />
+              <folding>
+                <element signature="e#1#25#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="test_esky.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/freeze_future/tests/test_esky.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.49945593">
+              <caret line="33" column="7" selection-start-line="33" selection-start-column="7" selection-end-line="33" selection-end-column="7" />
               <folding>
                 <element signature="e#81#118#0" expanded="true" />
               </folding>
@@ -88,7 +116,7 @@
         <entry file="file://$PROJECT_DIR$/freeze_future/tests/utils.py">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="127" column="55" selection-start-line="127" selection-start-column="55" selection-end-line="127" selection-end-column="55" />
+              <caret line="127" column="0" selection-start-line="127" selection-start-column="0" selection-end-line="127" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -114,13 +142,13 @@
         <option value="$PROJECT_DIR$/freeze_future/tests/test_setuptools.py" />
         <option value="$PROJECT_DIR$/freeze_future/tests/test_distutils.py" />
         <option value="$PROJECT_DIR$/freeze_future/tests/ass.txt" />
-        <option value="$PROJECT_DIR$/freeze_future/tests/test_esky.py" />
-        <option value="$PROJECT_DIR$/freeze_future/tests/test_cxfreeze.py" />
         <option value="$PROJECT_DIR$/freeze_future/tests/test_py2app.py" />
-        <option value="$PROJECT_DIR$/freeze_future/tests/utils.py" />
-        <option value="$PROJECT_DIR$/freeze_future/freeze_future.py" />
         <option value="C:/Python34/Lib/site-packages/py2exe/mf3.py" />
         <option value="$PROJECT_DIR$/freeze_future/tests/test_py2exe.py" />
+        <option value="$PROJECT_DIR$/freeze_future/freeze_future.py" />
+        <option value="$PROJECT_DIR$/freeze_future/tests/test_cxfreeze.py" />
+        <option value="$PROJECT_DIR$/freeze_future/tests/utils.py" />
+        <option value="$PROJECT_DIR$/freeze_future/tests/test_esky.py" />
       </list>
     </option>
   </component>
@@ -157,12 +185,11 @@
     <panes />
   </component>
   <component name="PropertiesComponent">
-    <property name="FullScreen" value="false" />
-    <property name="settings.editor.selected.configurable" value="preferences.keymap" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
     <property name="settings.editor.splitter.proportion" value="0.2" />
     <property name="recentsLimit" value="5" />
     <property name="restartRequiresConfirmation" value="true" />
-    <property name="last_opened_file_path" value="C:/Python34/Lib/site-packages/py2exe/mf3.py" />
+    <property name="last_opened_file_path" value="C:/Python34/Lib/site-packages/py2exe/runtime.py" />
     <property name="SearchEverywhereHistoryKey" value="test_es&#9;null&#9;null&#10;simpl&#9;null&#9;null&#10;test_cx&#9;FILE&#9;file:///home/alfa/Dropbox/programming/freeze_future/freeze_future/tests/test_cxfreeze.py&#10;free&#9;null&#9;null&#10;freeze_f&#9;null&#9;null&#10;set_trace&#9;null&#9;null&#10;test s&#9;null&#9;null&#10;varia&#9;null&#9;null&#10;test di&#9;null&#9;null&#10;util&#9;null&#9;null" />
   </component>
   <component name="RecentsManager">
@@ -446,7 +473,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2515625" sideWeight="0.4125178" order="0" side_tool="false" content_ui="combo" />
@@ -485,16 +512,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/freeze_future/tests/test_py2exe.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="e#81#118#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/freeze_future/tests/test_esky.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -826,41 +843,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/freeze_future/tests/variables.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.15601783">
-          <caret line="7" column="9" selection-start-line="7" selection-start-column="9" selection-end-line="7" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/freeze_future/tests/test_esky.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="243" column="77" selection-start-line="243" selection-start-column="77" selection-end-line="243" selection-end-column="77" />
-          <folding>
-            <element signature="e#81#118#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/freeze_future/tests/utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="127" column="55" selection-start-line="127" selection-start-column="55" selection-end-line="127" selection-end-column="55" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/freeze_future/tests/test_cxfreeze.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="17" column="0" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#37#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://C:/Python34/Lib/site-packages/py2exe/mf3.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -869,20 +851,66 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://C:/Python34/Lib/site-packages/py2exe/runtime.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="637" column="0" selection-start-line="637" selection-start-column="0" selection-end-line="637" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/freeze_future/freeze_future.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-15.740741">
-          <caret line="285" column="15" selection-start-line="285" selection-start-column="15" selection-end-line="285" selection-end-column="15" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="451" column="83" selection-start-line="451" selection-start-column="83" selection-end-line="451" selection-end-column="83" />
           <folding>
             <element signature="e#286#296#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/freeze_future/tests/utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="127" column="0" selection-start-line="127" selection-start-column="0" selection-end-line="127" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/freeze_future/tests/variables.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="14" column="29" selection-start-line="14" selection-start-column="29" selection-end-line="14" selection-end-column="29" />
+          <folding>
+            <element signature="e#1#25#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/freeze_future/tests/test_cxfreeze.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="151" column="0" selection-start-line="151" selection-start-column="0" selection-end-line="151" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#37#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/freeze_future/tests/test_py2exe.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.72421527">
-          <caret line="65" column="8" selection-start-line="65" selection-start-column="8" selection-end-line="65" selection-end-column="8" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="177" column="3" selection-start-line="177" selection-start-column="3" selection-end-line="177" selection-end-column="3" />
+          <folding>
+            <element signature="e#81#118#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/freeze_future/tests/test_esky.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.49945593">
+          <caret line="33" column="7" selection-start-line="33" selection-start-column="7" selection-end-line="33" selection-end-column="7" />
           <folding>
             <element signature="e#81#118#0" expanded="true" />
           </folding>
