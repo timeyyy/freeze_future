@@ -55,12 +55,13 @@ def esky_setup(name, script, **changes):
 
     options = {"options":
                    {"bdist_esky":
-                        {"freezer_module": FREEZER_TO_RUN_WITH_ESKY }}}
+                       {"compress": 'ZIP',
+                        "freezer_module": FREEZER_TO_RUN_WITH_ESKY }}}
 
     base_options['scripts'] = [new_script]
     base_options.update({'script_args':["bdist_esky"]})
     base_options.update(options)
-    # return dist_setup, base_options, new_script
+    return dist_setup, base_options, new_script
     #FIRST TEST USING THE FREEZE_FUTURE AND THE FIXES DEVELOPED THERE, WHEN ALL PASSING CHANGE TO distutils.setup
     return freeze_future.setup, base_options, new_script
     # return dist_setup, base_options, new_script
@@ -103,6 +104,7 @@ def test_esky_failure_condition2_fixed():
     assert clean_exit
 
 
+@pytest.mark.tim
 def test_esky_freeze_future_condition_one_fix():
     '''tests our fix when importing everything under the sun! also
     import builtins'''
@@ -115,7 +117,8 @@ def test_esky_freeze_future_condition_one_fix():
                 "from itertools import filterfalse",
                 "from subprocess import getoutput",
                 "from builtins import str",
-                "from builtins import range",)
+                "from builtins import range",
+                "from queue import Queue")
     setup(**options)
     clean_exit, stderr = run_script(new_script, freezer='esky')
     assert clean_exit
@@ -152,7 +155,7 @@ def test_multiple_runs_of_setup_function():
     '''make sure our fixes support multiple runs '''
     from esky.bdist_esky import Executable
     setup, options, new_script = esky_setup('Simple Working', WORKING_SCRIPT)
-    new_script2 = make_new_script_name('test_multiple_working.py'BE
+    new_script2 = make_new_script_name('test_multiple_working.py')
     insert_code(new_script2,'import sys')
     options2 = copy.deepcopy(options)
     options2['scripts'] = [new_script2]
@@ -211,6 +214,7 @@ def test_esky_patch():
     options2['scripts'] = [new_script2]
     options2['script_args'] = ['bdist_esky_patch']
     options2['version'] = '2.0'
+    options2['freezer'] = '2.0'
     setup(**options2)
 
     platform = get_platform()
